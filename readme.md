@@ -6,6 +6,16 @@
 
 Um das Projekt auf deinen PC zu bringen und mit der Arbeit zu beginnen, führe diese Schritte aus:
 
+0.  **Git installieren, falls noch nicht passiert**
+
+    1.  Git von [git-scm.com](https://git-scm.com/install/) herunterladen
+    2.  **Den Anweisungen folgen:** Führe die Installationsdatei aus und folge den Anweisungen des Installationsassistenten (die Standardeinstellungen sind meist ausreichend).
+    3.  **Einrichten der Identität (Einmalig):** Lege deinen Namen und deine E-Mail-Adresse fest:
+        ```bash
+        git config --global user.name "Dein Name"
+        git config --global user.email "deine.email@example.com"
+        ```
+
 1.  **Repo Klonen und in den Projektordner wechseln:**
 
     ```bash
