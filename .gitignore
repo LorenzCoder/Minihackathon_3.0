@@ -1,7 +1,4 @@
-node_modules/*
-frontend/node_modules/*
-dist
+**/node_modules/
 build
-node_modules
-dist
+**/dist/
 frontend/dist/*
