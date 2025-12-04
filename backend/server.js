@@ -4,20 +4,20 @@ server.js (c) 2025
 Created:  2025-12-03T19:40:03.642Z
 */
 
-const express = require('express'); 
-const cors  = require('cors');
+const express = require("express");
+const cors = require("cors");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/api/health', (req, res) => {
-    res.json({status: "Okay", message: "Im Team Panel (backend) läuft alles!"});
+app.get("/api/health", (req, res) => {
+  res.json({ status: "Okay", message: "Im Team Panel (backend) läuft alles!" });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server läuft auf Port http://localhost:${PORT}${PORT}`);
+  console.log(`Server läuft auf Port http://localhost:${PORT}`);
 });
 
 const users = [
@@ -27,9 +27,7 @@ const users = [
 app.post("/api/auth/login", (req, res) => {
   const { email, password } = req.body;
 
-  const user = users.find(
-    (u) => u.email === email && u.password === password
-  );
+  const user = users.find((u) => u.email === email && u.password === password);
 
   if (!user) {
     return res.status(401).json({ error: "Ungültige Login-Daten" });
