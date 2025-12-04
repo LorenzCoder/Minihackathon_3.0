@@ -1,6 +1,7 @@
-node_modules/*frontend
-frontend/node_modules
+node_modules/*
+frontend/node_modules/*
 dist
 build
 node_modules
 dist
+frontend/dist/*
