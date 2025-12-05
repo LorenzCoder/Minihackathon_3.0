@@ -36,11 +36,17 @@ function AddTeamPanel({ onExit }) {
   function handleRemoveMember(e, index) {
     e.preventDefault();
     setMembers((prevMembers) => prevMembers.filter((_, i) => i !== index));
+    setNewMembername("");
   }
 
   function handleSubmit(e) {
     e.preventDefault();
     // Hier der API request zum Erstellen des Teams
+    console.log("Teamname:", teamName);
+    console.log("Beschreibung:", description);
+    console.log("Mitglieder:", members);
+
+    onExit();
   }
 
   return (
@@ -66,6 +72,7 @@ function AddTeamPanel({ onExit }) {
           </div>
           <div className="flex items-center justify-between w-10/12">
             <input
+              value={newMembername}
               onChange={(e) => setNewMembername(e.target.value)}
               className="w-2/3 p-2 m-2 rounded-lg"
               placeholder="Username eingeben ..."
@@ -77,19 +84,20 @@ function AddTeamPanel({ onExit }) {
               Mitglied hinzufügen
             </button>
           </div>
-          <div className="w-10/12 p-2">
-            <ul className="w-full mt-6">
-              {members.map((member, index) => (
-                <li key={index} className="p-1">
-                  <div className="flex items-center justify-between w-full">
-                    <p>{member}</p>
-                    <button onClick={(e) => handleRemoveMember(e, index)}>
-                      Entfernen
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
+          <div className="w-10/12 p-2 mt-6 overflow-y-auto max-h-56 ">
+            {members.map((member, index) => (
+              <div key={index} className="px-3 py-1 mb-1 rounded bg-slate-200">
+                <div className="flex items-center justify-between w-full">
+                  <p>{member}</p>
+                  <button
+                    className="hover:underline"
+                    onClick={(e) => handleRemoveMember(e, index)}
+                  >
+                    Entfernen
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
