@@ -16,7 +16,7 @@ export default function Login() {
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen ">
       <h1 className="text-3xl">Login Page</h1>
-      <form className="flex flex-col gap-4 mt-5" onSubmit={handleSubmit}>
+      <form className="flex flex-col mt-5" onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Username"
