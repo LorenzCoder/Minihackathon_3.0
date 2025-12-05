@@ -2,8 +2,9 @@ export default function Home() {
   return (
     <>
       <div>
-        <nav className="flex w-full p-8 bg-slate-400">
+        <nav className="flex w-full gap-8 p-8 bg-slate-400">
           <a href="/login">Login</a>
+          <a href="/register"> Register</a>
         </nav>
         <div className="flex flex-col items-center justify-center w-full h-screen">
           <div>
