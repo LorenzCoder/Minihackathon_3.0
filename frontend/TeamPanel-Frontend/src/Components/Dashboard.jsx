@@ -56,7 +56,10 @@ function AddTeamPanel({ onExit }) {
           X
         </button>
       </div>
-      <form className="flex flex-col items-center justify-between w-full h-full">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col items-center justify-between w-full h-full"
+      >
         <div className="flex flex-col items-center justify-center w-full ">
           <div className="flex items-center justify-between w-10/12">
             <input
@@ -104,7 +107,6 @@ function AddTeamPanel({ onExit }) {
         <button
           type="submit"
           className="px-6 py-2 m-8 font-bold text-white bg-green-500 rounded-lg hover:bg-green-700"
-          onSubmit={handleSubmit}
         >
           Team erstellen
         </button>
