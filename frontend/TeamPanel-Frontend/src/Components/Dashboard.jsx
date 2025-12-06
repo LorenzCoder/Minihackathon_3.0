@@ -1,21 +1,13 @@
 import { useState } from "react";
+import Board from "./Board";
 
 export default function Dashboard() {
-  const [showAddTeamPanel, setShowAddTeamPanel] = useState(false);
-
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen ">
       <h1 className="text-2xl">Herzlich willkommen im Teampanel</h1>
-      <button
-        onClick={() => setShowAddTeamPanel(true)}
-        className="px-6 py-2 m-2 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-700"
-      >
-        Team anlegen
-      </button>
 
-      {showAddTeamPanel && (
-        <AddTeamPanel onExit={() => setShowAddTeamPanel(false)} />
-      )}
+      <TeamInitialisation />
+      <Board />
     </div>
   );
 }
@@ -112,5 +104,24 @@ function AddTeamPanel({ onExit }) {
         </button>
       </form>
     </div>
+  );
+}
+
+function TeamInitialisation() {
+  const [showAddTeamPanel, setShowAddTeamPanel] = useState(false);
+
+  return (
+    <>
+      <button
+        onClick={() => setShowAddTeamPanel(true)}
+        className="px-6 py-2 m-2 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-700"
+      >
+        Team anlegen
+      </button>
+
+      {showAddTeamPanel && (
+        <AddTeamPanel onExit={() => setShowAddTeamPanel(false)} />
+      )}
+    </>
   );
 }
