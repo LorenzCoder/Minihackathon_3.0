@@ -1,127 +1,73 @@
-import { useState } from "react";
-import Board from "./Board";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 
 export default function Dashboard() {
-  return (
-    <div className="flex flex-col items-center justify-center w-full h-screen ">
-      <h1 className="text-2xl">Herzlich willkommen im Teampanel</h1>
+  const [user, setUser] = useState(null);
+  const [checking, setChecking] = useState(true);
+  const navigate = useNavigate();
 
-      <TeamInitialisation />
-      <Board />
-    </div>
-  );
-}
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
 
-function AddTeamPanel({ onExit }) {
-  const [teamName, setTeamName] = useState("");
-  const [description, setDescription] = useState("");
-  const [newMembername, setNewMembername] = useState("");
-  const [members, setMembers] = useState([]);
+      if (error || !data?.user) {
+        // nicht eingeloggt -> direkt zurück zum Login
+        navigate("/login");
+        return;
+      }
 
-  function handleAddMember(e) {
-    e.preventDefault();
-    if (newMembername.trim() === "") return;
-    setMembers((prevMembers) => [...prevMembers, newMembername]);
-    setNewMembername("");
-  }
+      setUser(data.user);
+      setChecking(false);
+    };
 
-  function handleRemoveMember(e, index) {
-    e.preventDefault();
-    setMembers((prevMembers) => prevMembers.filter((_, i) => i !== index));
-    setNewMembername("");
-  }
+    checkUser();
+  }, [navigate]);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    // Hier der API request zum Erstellen des Teams
-    console.log("Teamname:", teamName);
-    console.log("Beschreibung:", description);
-    console.log("Mitglieder:", members);
-
-    onExit();
-  }
-
-  return (
-    <div className="absolute w-[500px] h-[300px] md:w-[600px] md:h-[400px] lg:w-[800px] lg:h-[500px] rounded-lg bg-slate-200 flex flex-col">
-      <div className="flex items-center justify-end">
-        <button onClick={onExit} className="p-3">
-          X
-        </button>
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-slate-50">
+        <p className="text-sm text-slate-400">Prüfe Login-Status...</p>
       </div>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col items-center justify-between w-full h-full"
-      >
-        <div className="flex flex-col items-center justify-center w-full ">
-          <div className="flex items-center justify-between w-10/12">
-            <input
-              className="w-1/3 p-2 m-2 rounded-lg"
-              placeholder="Teamname"
-              onChange={(e) => setTeamName(e.target.value)}
-            ></input>
-            <input
-              className="w-2/3 p-2 m-2 rounded-lg"
-              placeholder="Beschreibung"
-              onChange={(e) => setDescription(e.target.value)}
-            ></input>
-          </div>
-          <div className="flex items-center justify-between w-10/12">
-            <input
-              value={newMembername}
-              onChange={(e) => setNewMembername(e.target.value)}
-              className="w-2/3 p-2 m-2 rounded-lg"
-              placeholder="Username eingeben ..."
-            ></input>
-            <button
-              onClick={handleAddMember}
-              className="w-1/3 p-2 m-2 text-white bg-blue-500 rounded-lg hover:bg-blue-700"
-            >
-              Mitglied hinzufügen
-            </button>
-          </div>
-          <div className="w-10/12 p-2 mt-6 overflow-y-auto max-h-56 ">
-            {members.map((member, index) => (
-              <div key={index} className="px-3 py-1 mb-1 rounded bg-slate-200">
-                <div className="flex items-center justify-between w-full">
-                  <p>{member}</p>
-                  <button
-                    className="hover:underline"
-                    onClick={(e) => handleRemoveMember(e, index)}
-                  >
-                    Entfernen
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-50">
+      <nav className="flex items-center justify-between w-full px-8 py-6 backdrop-blur-sm bg-slate-900/40 border-b border-slate-800/70">
+        <a
+          href="/"
+          className="text-sm text-slate-200 hover:text-white hover:underline transition-colors"
+        >
+          NovaPanel
+        </a>
+
+        <h1 className="text-2xl font-semibold">Dashboard</h1>
+
+        <span className="text-xs text-slate-500">
+          {user ? user.email : "Unbekannt"}
+        </span>
+      </nav>
+
+      <main className="flex-1 flex flex-col items-center justify-center px-6 py-10">
+        <div className="inline-flex items-center gap-2 px-3 py-1 text-[11px] font-medium tracking-wide uppercase rounded-full border border-sky-400/50 bg-sky-500/10 text-sky-200/90 mb-6">
+          <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
+          Mini Hackathon 3.0 – NovaPanel Dashboard
         </div>
 
-        <button
-          type="submit"
-          className="px-6 py-2 m-8 font-bold text-white bg-green-500 rounded-lg hover:bg-green-700"
-        >
-          Team erstellen
-        </button>
-      </form>
+        <div className="max-w-3xl text-center space-y-4">
+          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+            Willkommen im{" "}
+            <span className="bg-gradient-to-r from-sky-400 via-cyan-300 to-sky-500 bg-clip-text text-transparent">
+              NovaPanel
+            </span>
+          </h2>
+
+          <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+            Hier kannst du später deine Boards, Tasks und Teams organisieren.
+          </p>
+        </div>
+      </main>
     </div>
-  );
-}
-
-function TeamInitialisation() {
-  const [showAddTeamPanel, setShowAddTeamPanel] = useState(false);
-
-  return (
-    <>
-      <button
-        onClick={() => setShowAddTeamPanel(true)}
-        className="px-6 py-2 m-2 font-bold text-white bg-blue-500 rounded-lg hover:bg-blue-700"
-      >
-        Team anlegen
-      </button>
-
-      {showAddTeamPanel && (
-        <AddTeamPanel onExit={() => setShowAddTeamPanel(false)} />
-      )}
-    </>
   );
 }
