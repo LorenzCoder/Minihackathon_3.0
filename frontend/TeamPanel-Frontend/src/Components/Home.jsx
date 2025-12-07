@@ -21,7 +21,7 @@ export default function Home() {
 
         {/* Main-Bereich, schön verteilt */}
         <main className="flex-1 flex flex-col items-center justify-center px-6 py-10">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 text-[11px] font-medium tracking-wide uppercase rounded-full border border-sky-400/50 bg-sky-500/10 text-sky-200/90">
+          <div className="inline-flex items-center gap-2 px-3 py-1 text-[11px] font-medium tracking-wide uppercase rounded-full border border-sky-400/50 bg-sky-500/10 text-sky-200/90">
             <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
             Mini Hackathon 3.0 – Projektabgabe
           </div>
@@ -36,32 +36,30 @@ export default function Home() {
             <p className="text-sm md:text-base text-slate-300 leading-relaxed">
               Willkommen auf dem NovaPanel, einem Team-Organisations-Tool, das
               viel Wert auf Perfektion und Ordnung legt. Dieses Projekt ist eine
-              Abgabe von Julian, Lorenz, Pietro und Hube für den Mini Hackathon
-              (3.0) von Kevin Chromik.
+              Abgabe von Julian, Lorenz und Hube für den Mini Hackathon (3.0)
+              von Kevin Chromik.
             </p>
           </div>
 
-      <div className="flex flex-col items-center px-6 pt-16 pb-12">
-        {/* Hero */}
-        <section className="flex flex-col items-center text-center max-w-3xl mb-10 gap-4">
+          <div className="flex flex-col items-center px-6 pt-16 pb-12">
+            {/* Hero */}
+            <section className="flex flex-col items-center text-center max-w-3xl mb-10 gap-4">
+              <a
+                href="/login"
+                className="mt-4 px-6 py-3 text-sm font-semibold rounded-full bg-sky-500 hover:bg-sky-400 text-slate-900 shadow-md shadow-sky-900/50 transition-all duration-200"
+              >
+                Zum Login
+              </a>
 
-          <a
-            href="/login"
-            className="mt-4 px-6 py-3 text-sm font-semibold rounded-full bg-sky-500 hover:bg-sky-400 text-slate-900 shadow-md shadow-sky-900/50 transition-all duration-200"
-          >
-            Zum Login
-          </a>
-
-          <p className="mt-4 text-xs text-slate-400">
-            Ein Projekt von{" "}
-            <span className="font-medium text-slate-200">
-              Julian, Lorenz, Pietro und Hube
-            </span>{" "}
-            für den Mini Hackathon (3.0) von Kevin Chromik.
-          </p>
-                </section>
+              <p className="mt-4 text-xs text-slate-400">
+                Ein Projekt von{" "}
+                <span className="font-medium text-slate-200">
+                  Julian, Lorenz und Hube
+                </span>{" "}
+                für den Mini Hackathon (3.0) von Kevin Chromik.
+              </p>
+            </section>
           </div>
-
         </main>
       </div>
     </>

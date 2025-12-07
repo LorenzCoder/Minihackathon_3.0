@@ -49,6 +49,7 @@ export default function Dashboard() {
   // Form-States
   const [showForm, setShowForm] = useState(false);
   const [teamName, setTeamName] = useState("");
+  const [teamSize, setTeamSize] = useState("");
   const [description, setDescription] = useState("");
   const [memberNames, setMemberNames] = useState(""); // optional
   const [featureTodo, setFeatureTodo] = useState(true);
@@ -58,7 +59,32 @@ export default function Dashboard() {
   const [formError, setFormError] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
 
-  // 🔐 Guard: nur eingeloggte User
+  // Team-Liste
+  const [teams, setTeams] = useState([]);
+  const [loadingTeams, setLoadingTeams] = useState(true);
+  const [teamsError, setTeamsError] = useState("");
+
+  // Teams aus Supabase laden
+  async function loadTeams() {
+    setTeamsError("");
+    setLoadingTeams(true);
+
+    const { data, error } = await supabase
+      .from("teams")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error(error);
+      setTeamsError("Teams konnten nicht geladen werden.");
+    } else {
+      setTeams(data || []);
+    }
+
+    setLoadingTeams(false);
+  }
+
+  // 🔐 Guard: nur eingeloggte User + danach Teams laden
   useEffect(() => {
     const checkUser = async () => {
       const { data, error } = await supabase.auth.getUser();
@@ -70,6 +96,7 @@ export default function Dashboard() {
 
       setUser(data.user);
       setChecking(false);
+      loadTeams();
     };
 
     checkUser();
@@ -87,8 +114,6 @@ export default function Dashboard() {
 
     setCreating(true);
     try {
-      // Features + Members aktuell nur im Frontend,
-      // können später in der DB mit eigenen Spalten/Tabellen ergänzt werden.
       const selectedFeatures = [];
       if (featureTodo) selectedFeatures.push("todo-list");
       if (featureManager) selectedFeatures.push("team-manager");
@@ -99,17 +124,12 @@ export default function Dashboard() {
         .map((m) => m.trim())
         .filter(Boolean);
 
-      console.log("Neues Team – Features:", selectedFeatures);
-      console.log("Neues Team – Member-Usernames:", memberList);
-
-      // Team in Supabase-DB schreiben (Tabelle: teams)
       const { data, error } = await supabase
         .from("teams")
         .insert([
           {
             name: teamName,
             description: description || "",
-            created_by: user.id,
           },
         ])
         .select()
@@ -123,21 +143,45 @@ export default function Dashboard() {
 
       setFormSuccess(`Team "${data.name}" wurde erstellt.`);
       setTeamName("");
+      setTeamSize("");
       setDescription("");
       setMemberNames("");
       setFeatureTodo(true);
       setFeatureManager(true);
       setFeatureAnnouncements(true);
 
-      // Du könntest hier später:
-      // - team_members-Einträge anlegen
-      // - direkt auf ein Team-spezifisches Board routen
+      // Liste neu laden
+      loadTeams();
+
+      // Direkt auf TeamBoard
+      navigate(`/team/${data.id}`, {
+        state: {
+          team: data,
+          features: selectedFeatures,
+          members: memberList,
+          teamSize,
+        },
+      });
     } catch (err) {
       console.error(err);
       setFormError("Unerwarteter Fehler beim Erstellen des Teams.");
     } finally {
       setCreating(false);
     }
+  };
+
+  const handleJoinTeam = (team) => {
+    // Solange Features nicht in der DB sind: Standard-Feature-Set
+    const defaultFeatures = ["todo-list", "team-manager", "announcements"];
+
+    navigate(`/team/${team.id}`, {
+      state: {
+        team,
+        features: defaultFeatures,
+        members: [],
+        teamSize: "",
+      },
+    });
   };
 
   if (checking) {
@@ -244,7 +288,7 @@ export default function Dashboard() {
                     className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-sm text-slate-100 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500 min-h-[60px]"
                     value={memberNames}
                     onChange={(e) => setMemberNames(e.target.value)}
-                    placeholder="Komma-getrennt, z.B. hube, lorenz, julian, pietro"
+                    placeholder="Komma-getrennt, z.B. hube, lorenz, julian"
                   />
                 </div>
 
@@ -313,6 +357,56 @@ export default function Dashboard() {
           </section>
         )}
 
+        {/* Team-Liste */}
+        <section className="w-full max-w-4xl mb-10">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-slate-100">
+              Deine Teams
+            </h3>
+            {loadingTeams && (
+              <span className="text-[11px] text-slate-500">Lade...</span>
+            )}
+          </div>
+
+          {teamsError && (
+            <p className="mb-2 text-xs text-red-400">{teamsError}</p>
+          )}
+
+          {teams.length === 0 && !loadingTeams ? (
+            <p className="text-xs text-slate-500">
+              Du hast noch keine Teams erstellt.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {teams.map((team) => (
+                <div
+                  key={team.id}
+                  className="flex items-center justify-between gap-3 bg-slate-900/80 border border-slate-800 rounded-xl px-4 py-2.5"
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate text-slate-100">
+                      {team.name}
+                    </p>
+                    {team.description && (
+                      <p className="text-[11px] text-slate-500 truncate">
+                        {team.description}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleJoinTeam(team)}
+                      className="px-3 py-1.5 rounded-full bg-sky-500 hover:bg-sky-400 text-[11px] font-semibold text-slate-900"
+                    >
+                      Beitreten
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
         {/* Feature-Karten */}
         <section className="grid w-full max-w-4xl gap-4 md:grid-cols-2">
           {FEATURES.map((feature) => (
@@ -320,12 +414,10 @@ export default function Dashboard() {
               key={feature.title}
               className="flex items-start gap-3 px-4 py-3 border shadow-md rounded-2xl bg-slate-900/80 border-slate-800 shadow-slate-950/40"
             >
-              {/* Icon-Block */}
               <div className="flex items-center justify-center w-10 h-10 mt-1 shadow-inner rounded-xl bg-amber-500/90 shadow-amber-900/70">
                 <span className="text-xl text-slate-950">!</span>
               </div>
 
-              {/* Text-Block */}
               <div className="flex-1 min-w-0 space-y-1">
                 <div className="flex items-center justify-between gap-2">
                   <h3 className="font-medium truncate text-slate-100">
