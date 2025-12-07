@@ -49,7 +49,6 @@ export default function Dashboard() {
   // Form-States
   const [showForm, setShowForm] = useState(false);
   const [teamName, setTeamName] = useState("");
-  const [teamSize, setTeamSize] = useState("");
   const [description, setDescription] = useState("");
   const [memberNames, setMemberNames] = useState(""); // optional
   const [featureTodo, setFeatureTodo] = useState(true);
@@ -102,7 +101,6 @@ export default function Dashboard() {
 
       console.log("Neues Team – Features:", selectedFeatures);
       console.log("Neues Team – Member-Usernames:", memberList);
-      console.log("Neues Team – Teamgröße:", teamSize);
 
       // Team in Supabase-DB schreiben (Tabelle: teams)
       const { data, error } = await supabase
@@ -125,7 +123,6 @@ export default function Dashboard() {
 
       setFormSuccess(`Team "${data.name}" wurde erstellt.`);
       setTeamName("");
-      setTeamSize("");
       setDescription("");
       setMemberNames("");
       setFeatureTodo(true);
@@ -145,19 +142,19 @@ export default function Dashboard() {
 
   if (checking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-slate-50">
+      <div className="flex items-center justify-center min-h-screen bg-slate-900 text-slate-50">
         <p className="text-sm text-slate-400">Prüfe Login-Status...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-slate-50">
       {/* Navbar */}
-      <nav className="flex items-center justify-between w-full px-8 py-6 backdrop-blur-sm bg-slate-900/40 border-b border-slate-800/70">
+      <nav className="flex items-center justify-between w-full px-8 py-6 border-b backdrop-blur-sm bg-slate-900/40 border-slate-800/70">
         <a
           href="/"
-          className="text-sm text-slate-200 hover:text-white hover:underline transition-colors"
+          className="text-sm transition-colors text-slate-200 hover:text-white hover:underline"
         >
           NovaPanel
         </a>
@@ -170,7 +167,7 @@ export default function Dashboard() {
       </nav>
 
       {/* Main */}
-      <main className="flex-1 flex flex-col items-center px-6 py-10">
+      <main className="flex flex-col items-center flex-1 px-6 py-10">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-3 py-1 text-[11px] font-medium tracking-wide uppercase rounded-full border border-sky-400/50 bg-sky-500/10 text-sky-200/90 mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-sky-400" />
@@ -178,16 +175,16 @@ export default function Dashboard() {
         </div>
 
         {/* Intro + Button */}
-        <div className="w-full max-w-4xl flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <div className="flex flex-col w-full max-w-4xl gap-4 mb-8 md:flex-row md:items-center md:justify-between">
           <div className="max-w-2xl space-y-2">
             <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
               Willkommen im{" "}
-              <span className="bg-gradient-to-r from-sky-400 via-cyan-300 to-sky-500 bg-clip-text text-transparent">
+              <span className="text-transparent bg-gradient-to-r from-sky-400 via-cyan-300 to-sky-500 bg-clip-text">
                 NovaPanel
               </span>
             </h2>
 
-            <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+            <p className="text-sm leading-relaxed md:text-base text-slate-300">
               Erstelle neue Teams, verwalte deine Boards und plane eure Tasks.
               Unten siehst du die geplanten Hauptfeatures unseres Tools.
             </p>
@@ -204,7 +201,7 @@ export default function Dashboard() {
         {/* Team-Formular */}
         {showForm && (
           <section className="w-full max-w-4xl mb-10">
-            <div className="bg-slate-900/80 border border-slate-800 rounded-2xl shadow-lg shadow-slate-950/50 p-6 space-y-5">
+            <div className="p-6 space-y-5 border shadow-lg bg-slate-900/80 border-slate-800 rounded-2xl shadow-slate-950/50">
               <div className="flex items-center justify-between gap-2">
                 <h3 className="text-lg font-semibold text-slate-50">
                   Neues Team erstellen
@@ -214,13 +211,14 @@ export default function Dashboard() {
                 </span>
               </div>
 
-              <form className="grid gap-4 md:grid-cols-2" onSubmit={handleCreateTeam}>
-                <div className="space-y-1 md:col-span-1">
-                  <label className="text-sm text-slate-200">
-                    Teamname *
-                  </label>
+              <form
+                className="grid gap-4 md:grid-cols-2"
+                onSubmit={handleCreateTeam}
+              >
+                <div className="space-y-1 md:col-span-2">
+                  <label className="text-sm text-slate-200">Teamname *</label>
                   <input
-                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-sm text-slate-100 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500"
+                    className="w-full px-3 py-2 text-sm border rounded-lg outline-none bg-slate-950 border-slate-700 text-slate-100 focus:border-sky-400 focus:ring-1 focus:ring-sky-500"
                     value={teamName}
                     onChange={(e) => setTeamName(e.target.value)}
                     placeholder="z.B. NovaPanel Core Team"
@@ -228,22 +226,8 @@ export default function Dashboard() {
                   />
                 </div>
 
-                <div className="space-y-1 md:col-span-1">
-                  <label className="text-sm text-slate-200">Teamgröße</label>
-                  <input
-                    type="number"
-                    min={1}
-                    className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-sm text-slate-100 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500"
-                    value={teamSize}
-                    onChange={(e) => setTeamSize(e.target.value)}
-                    placeholder="z.B. 4"
-                  />
-                </div>
-
                 <div className="space-y-1 md:col-span-2">
-                  <label className="text-sm text-slate-200">
-                    Beschreibung
-                  </label>
+                  <label className="text-sm text-slate-200">Beschreibung</label>
                   <textarea
                     className="w-full px-3 py-2 rounded-lg bg-slate-950 border border-slate-700 text-sm text-slate-100 outline-none focus:border-sky-400 focus:ring-1 focus:ring-sky-500 min-h-[80px]"
                     value={description}
@@ -302,20 +286,20 @@ export default function Dashboard() {
                 </div>
 
                 {/* Fehlermeldungen */}
-                <div className="md:col-span-2 space-y-2">
+                <div className="space-y-2 md:col-span-2">
                   {formError && (
-                    <p className="text-xs text-red-400 bg-red-950/40 px-3 py-2 rounded-lg">
+                    <p className="px-3 py-2 text-xs text-red-400 rounded-lg bg-red-950/40">
                       {formError}
                     </p>
                   )}
                   {formSuccess && (
-                    <p className="text-xs text-emerald-400 bg-emerald-950/40 px-3 py-2 rounded-lg">
+                    <p className="px-3 py-2 text-xs rounded-lg text-emerald-400 bg-emerald-950/40">
                       {formSuccess}
                     </p>
                   )}
                 </div>
 
-                <div className="md:col-span-2 flex justify-end">
+                <div className="flex justify-end md:col-span-2">
                   <button
                     type="submit"
                     disabled={creating}
@@ -330,28 +314,28 @@ export default function Dashboard() {
         )}
 
         {/* Feature-Karten */}
-        <section className="w-full max-w-4xl grid gap-4 md:grid-cols-2">
+        <section className="grid w-full max-w-4xl gap-4 md:grid-cols-2">
           {FEATURES.map((feature) => (
             <article
               key={feature.title}
-              className="flex items-start gap-3 rounded-2xl bg-slate-900/80 border border-slate-800 px-4 py-3 shadow-md shadow-slate-950/40"
+              className="flex items-start gap-3 px-4 py-3 border shadow-md rounded-2xl bg-slate-900/80 border-slate-800 shadow-slate-950/40"
             >
               {/* Icon-Block */}
-              <div className="flex items-center justify-center mt-1 w-10 h-10 rounded-xl bg-amber-500/90 shadow-inner shadow-amber-900/70">
+              <div className="flex items-center justify-center w-10 h-10 mt-1 shadow-inner rounded-xl bg-amber-500/90 shadow-amber-900/70">
                 <span className="text-xl text-slate-950">!</span>
               </div>
 
               {/* Text-Block */}
               <div className="flex-1 min-w-0 space-y-1">
                 <div className="flex items-center justify-between gap-2">
-                  <h3 className="font-medium text-slate-100 truncate">
+                  <h3 className="font-medium truncate text-slate-100">
                     {feature.title}
                   </h3>
                   <span className="px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wide bg-slate-800 text-slate-300">
                     {feature.tag}
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 leading-snug">
+                <p className="text-xs leading-snug text-slate-400">
                   {feature.description}
                 </p>
               </div>
