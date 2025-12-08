@@ -28,6 +28,12 @@ Um das Projekt auf deinen PC zu bringen und mit der Arbeit zu beginnen, führe d
     # Zeigt alle Branches an, die lokal und auf GitHub existieren
     git branch -a
     ```
+3.  **Projekt ausführen**
+    ```bash
+    npm run install:all
+    npm start
+    ```
+    Danach die angegebene Url im Terminal im Webbrowser aufrufen!
 
 ### 2. ↔️ Branch wechseln und Navigieren
 
