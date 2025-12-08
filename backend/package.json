@@ -1,0 +1,7 @@
+{
+  "name": "backend",
+  "packageManager": "yarn@4.9.2",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.86.2"
+  }
+}
