@@ -1,1 +1,10 @@
+<<<<<<< HEAD
 **/node_modules/*
+=======
+**/dist/
+**/build/
+# backend/.env
+
+.DS_Store
+**/node_modules/
+>>>>>>> dev
