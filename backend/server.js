@@ -1,13 +1,15 @@
 /*
 Author: C0Eight (3fa85f64-e556-3210-p3xu2c0d3)
 server.js (c) 2025
-Created:  2025-12-03T19:40:03.642Z
+Created:  2025-12-03T19:40:03.642Z
 */
 
-require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { supabase } = require("./supabaseClient");
+const path = require("path");
+
+// Sicherstellen, dass die .env-Datei geladen wird
+require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -15,100 +17,110 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
+// ------------------------------------------------------------------
+// NEUE LOGIK: Frontend-Dateien ausliefern
+// ------------------------------------------------------------------
+
+// 1. Definiere den Pfad zum kompilierten Frontend-Code
+const FRONTEND_BUILD_PATH = path.join(
+  __dirname,
+  "..",
+  "frontend",
+  "TeamPanel-Frontend",
+  "dist"
+);
+
+// 2. Liefere alle statischen Dateien (CSS, JS, Bilder) aus diesem Ordner aus
+app.use(express.static(FRONTEND_BUILD_PATH));
+
+// ------------------------------------------------------------------
+// Bestehende API-Routen mit SIMULIERTEN DATEN
+// ------------------------------------------------------------------
+
 // Health-Check / Test
 app.get("/", (req, res) => {
-  res.json({ ok: true, message: "NovaPanel Backend läuft ✅" });
+  res.json({ ok: true, message: "NovaPanel Backend läuft (Ohne Supabase) ✅" });
 });
 
 /**
  * GET /api/teams
- * Holt alle Teams aus deiner Supabase-DB (Tabelle: teams)
+ * Gibt SIMULIERTE Teams zurück
  */
 app.get("/api/teams", async (req, res) => {
-  try {
-    const { data, error } = await supabase
-      .from("teams")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Supabase-Fehler /api/teams:", error);
-      return res.status(500).json({ error: error.message });
-    }
-
-    res.json(data);
-  } catch (err) {
-    console.error("Server-Fehler /api/teams:", err);
-    res.status(500).json({ error: "Interner Serverfehler" });
-  }
+  // Simulierte Daten, damit das Frontend nicht abstürzt
+  const mockTeams = [
+    { id: "team-a", name: "Alpha-Team", created_at: new Date().toISOString() },
+    { id: "team-b", name: "Beta-Team", created_at: new Date().toISOString() },
+  ];
+  res.json(mockTeams);
 });
 
 /**
  * GET /api/tasks?teamId=...
- * Holt Tasks zu einem bestimmten Team
+ * Gibt SIMULIERTE Tasks zu einem bestimmten Team zurück
  */
 app.get("/api/tasks", async (req, res) => {
   const { teamId } = req.query;
 
   if (!teamId) {
     return res.status(400).json({ error: "teamId ist erforderlich" });
-  }
+  } // Simulierte Daten, basierend auf der Team-ID
 
-  try {
-    const { data, error } = await supabase
-      .from("tasks")
-      .select("*")
-      .eq("team_id", teamId)
-      .order("position", { ascending: true });
-
-    if (error) {
-      console.error("Supabase-Fehler /api/tasks:", error);
-      return res.status(500).json({ error: error.message });
-    }
-
-    res.json(data);
-  } catch (err) {
-    console.error("Server-Fehler /api/tasks:", err);
-    res.status(500).json({ error: "Interner Serverfehler" });
-  }
+  const mockTasks = [
+    {
+      id: 1,
+      team_id: teamId,
+      title: "Mock Task 1",
+      status: "todo",
+      position: 0,
+    },
+    {
+      id: 2,
+      team_id: teamId,
+      title: "Mock Task 2",
+      status: "in-progress",
+      position: 1,
+    },
+  ];
+  res.json(mockTasks);
 });
 
 /**
  * POST /api/tasks
- * JSON-Body: { "team_id": "...", "title": "Tasktitel", "description": "optional" }
+ * Simuliert die Erstellung eines Tasks
  */
 app.post("/api/tasks", async (req, res) => {
-  const { team_id, title, description } = req.body;
+  const { team_id, title } = req.body;
 
   if (!team_id || !title) {
     return res
       .status(400)
       .json({ error: "team_id und title sind erforderlich" });
-  }
+  } // Gibt den erstellten Task mit einer temporären ID zurück
 
-  try {
-    const { data, error } = await supabase.from("tasks").insert([
-      {
-        team_id,
-        title,
-        description: description || "",
-        status: "todo",
-        position: 0,
-      },
-    ]);
+  const newTask = {
+    id: Date.now(),
+    team_id,
+    title,
+    status: "todo",
+    position: 0,
+  };
 
-    if (error) {
-      console.error("Supabase-Fehler POST /api/tasks:", error);
-      return res.status(500).json({ error: error.message });
-    }
+  res.status(201).json(newTask);
+});
 
-    res.status(201).json(data[0]);
-  } catch (err) {
-    console.error("Server-Fehler POST /api/tasks:", err);
-    res.status(500).json({ error: "Interner Serverfehler" });
-  }
+// ------------------------------------------------------------------
+// FINALE KORREKTUR: Catch-all Route für das Frontend
+// ------------------------------------------------------------------
+
+// Dies fängt alle Anfragen ab, die nicht von den API-Routen oder express.static
+// behandelt wurden, und liefert die index.html aus.
+app.use((req, res) => {
+  res.sendFile(path.join(FRONTEND_BUILD_PATH, "index.html"));
 });
 
 app.listen(PORT, () => {
-  console.log(`NovaPanel Backend läuft auf http://localhost:${PORT}`);
+  console.log(
+    `NovaPanel Backend (Mock Mode) läuft auf http://localhost:${PORT}`
+  );
 });

@@ -1,20 +1,6 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-**/node_modules/*
-=======
-**/node_modules/
 **/dist/
 **/build/
-
-
-.env
-*.env
-backend/.env
+# backend/.env
 
 .DS_Store
->>>>>>> dev-backend
-=======
 **/node_modules/
-build
-**/dist/
->>>>>>> dev-frontend
