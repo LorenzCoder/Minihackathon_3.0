@@ -30,6 +30,7 @@ Um das Projekt auf deinen PC zu bringen und mit der Arbeit zu beginnen, führe d
     ```
 3.  **Projekt ausführen**
     ```bash
+    npm run update:all
     npm run install:all
     npm start
     ```
